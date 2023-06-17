@@ -4,8 +4,8 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {NavigationContainer} from '@react-navigation/native';
 import {TransitionPresets, createStackNavigator} from '@react-navigation/stack';
 
-import Welcome from "./src/modules/welcome/Welcome";
-import Login from "./src/modules/login/Login";
+import Welcome from './src/modules/welcome/Welcome';
+import Login from './src/modules/login/Login';
 
 const Stack = createStackNavigator();
 
@@ -24,14 +24,15 @@ function App(): JSX.Element {
             component={Welcome}
             options={{
               headerShown: false,
-            }}></Stack.Screen>
+            }}
+          />
           <Stack.Screen
             name="Login"
             component={Login}
             options={{
               headerShown: false,
-              ...TransitionPresets.ModalSlideFromBottomIOS,
-            }}></Stack.Screen>
+            }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Text,
   Linking,
+  TextInput,
 } from 'react-native';
 
 import icon_main_logo from '../../assets/icon_main_logo.png';
@@ -13,10 +14,17 @@ import icon_unselected from '../../assets/icon_unselected.png';
 import icon_selected from '../../assets/icon_selected.png';
 import icon_arrow from '../../assets/icon_arrow.png';
 import icon_wx_small from '../../assets/icon_wx_small.png';
+import icon_triangle from '../../assets/icon_triangle.png';
+import icon_eye_open from '../../assets/icon_eye_open.png';
+import icon_eye_close from '../../assets/icon_eye_close.png';
+import icon_exchange from '../../assets/icon_exchange.png';
+import icon_wx from '../../assets/icon_wx.png';
+import icon_qq from '../../assets/icon_qq.webp';
 
 export default () => {
   const [loginType, setLoginType] = useState<'quick' | 'input'>('quick');
   const [check, setCheck] = useState<boolean>(false);
+  const [eyeOpen, setEyeOpen] = useState(false);
   const renderQuickLogin = () => {
     const styles = StyleSheet.create({
       root: {
@@ -25,25 +33,6 @@ export default () => {
         flexDirection: 'column-reverse',
         alignItems: 'center',
         paddingHorizontal: 56,
-      },
-      protocolLayout: {
-        width: '100%',
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 40,
-      },
-      radioButton: {
-        width: 20,
-        height: 20,
-      },
-      labelTxt: {
-        fontSize: 12,
-        color: '#999',
-        marginLeft: 6,
-      },
-      protocolTxt: {
-        fontSize: 12,
-        color: '#1020ff',
       },
       otherLoginButton: {
         flexDirection: 'row',
@@ -107,22 +96,26 @@ export default () => {
     });
     return (
       <View style={styles.root}>
-        <View style={styles.protocolLayout}>
+        <View style={allStyles.protocolLayout}>
           <TouchableOpacity
+            activeOpacity={1}
             onPress={() => {
               setCheck(!check);
             }}>
             <Image
-              style={styles.radioButton}
+              style={allStyles.radioButton}
               source={check ? icon_selected : icon_unselected}
             />
           </TouchableOpacity>
-          <Text style={styles.labelTxt}>我已阅读并同意</Text>
+          <Text style={allStyles.labelTxt}>我已阅读并同意</Text>
           <TouchableOpacity
+            activeOpacity={0.7}
             onPress={() => {
               Linking.openURL('https://cloud.huajianjiu.top');
             }}>
-            <Text style={styles.protocolTxt}>《用户协议》和《隐私政策》</Text>
+            <Text style={allStyles.protocolTxt}>
+              《用户协议》和《隐私政策》
+            </Text>
           </TouchableOpacity>
         </View>
         <TouchableOpacity
@@ -172,30 +165,170 @@ export default () => {
       },
       phoneLayout: {
         width: '100%',
-        height: 64,
+        height: 50,
         flexDirection: 'row',
         alignItems: 'center',
         borderBottomWidth: 1,
-        borderBottomColor: '#ddd',
+        borderBottomColor: '#f0f0f0',
         marginTop: 20,
-      }
+      },
+      pre86: {
+        fontSize: 20,
+        color: '#999',
+      },
+      triangle: {
+        width: 12,
+        height: 6,
+        marginLeft: 6,
+      },
+      phoneInput: {
+        flex: 1,
+        height: 50,
+        backgroundColor: 'transparent',
+        textAlign: 'left',
+        textAlignVertical: 'center',
+        fontSize: 20,
+        color: '#333',
+        marginLeft: 16,
+      },
+      pwdLayout: {
+        width: '100%',
+        height: 50,
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderBottomWidth: 1,
+        borderBottomColor: '#f0f0f0',
+        marginTop: 8,
+      },
+      pwdInput: {
+        marginLeft: 0,
+        marginRight: 16,
+      },
+      iconEye: {
+        width: 30,
+        height: 30,
+      },
+      changeLayout: {
+        width: '100%',
+        marginTop: 10,
+        alignItems: 'center',
+        flexDirection: 'row',
+      },
+      exchangeIcon: {
+        width: 16,
+        height: 16,
+      },
+      codeLoginTxt: {
+        fontSize: 12,
+        color: '#303080',
+        flex: 1,
+      },
+      forgetPwdTxt: {
+        fontSize: 12,
+      },
+      loginButton: {
+        width: '100%',
+        height: 56,
+        backgroundColor: 'red',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 28,
+        marginTop: 20,
+      },
+      loginTxt: {
+        fontSize: 20,
+        color: 'white',
+      },
+      wxqqLayout: {
+        width: '100%',
+        flexDirection: 'row',
+        marginTop: 54,
+        justifyContent: 'space-between',
+      },
+      iconWx: {
+        width: 50,
+        height: 50,
+      },
     });
     return (
       <View style={styles.root}>
         <Text style={styles.pwdLogin}>密码登录</Text>
         <Text style={styles.tip}>未注册的手机号登录成功后将自动注册</Text>
-        <View style={styles.phoneLayout}></View>
+        <View style={styles.phoneLayout}>
+          <Text style={styles.pre86}>+86</Text>
+          <Image style={styles.triangle} source={icon_triangle} />
+          <TextInput
+            keyboardType={'number-pad'}
+            style={styles.phoneInput}
+            placeholderTextColor="#bbb"
+            placeholder="请输入手机号码"
+          />
+        </View>
+
+        <View style={styles.pwdLayout}>
+          <TextInput
+            textContentType={'password'}
+            secureTextEntry={!eyeOpen}
+            style={[styles.phoneInput, styles.pwdInput]}
+            placeholderTextColor="#bbb"
+            placeholder="请输入密码"
+          />
+          <TouchableOpacity
+            onPress={() => {
+              setEyeOpen(!eyeOpen);
+            }}
+            activeOpacity={0.7}>
+            <Image
+              style={styles.iconEye}
+              source={eyeOpen ? icon_eye_open : icon_eye_close}
+            />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.changeLayout}>
+          <Image style={styles.exchangeIcon} source={icon_exchange} />
+          <Text style={styles.codeLoginTxt}>验证码登录</Text>
+          <Text style={styles.forgetPwdTxt}>忘记密码？</Text>
+        </View>
+        <TouchableOpacity activeOpacity={0.7} style={styles.loginButton}>
+          <Text style={styles.loginTxt}>登录</Text>
+        </TouchableOpacity>
+        <View style={allStyles.protocolLayout}>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => {
+              setCheck(!check);
+            }}>
+            <Image
+              style={allStyles.radioButton}
+              source={check ? icon_selected : icon_unselected}
+            />
+          </TouchableOpacity>
+          <Text style={allStyles.labelTxt}>我已阅读并同意</Text>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => {
+              Linking.openURL('https://cloud.huajianjiu.top');
+            }}>
+            <Text style={allStyles.protocolTxt}>
+              《用户协议》和《隐私政策》
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.wxqqLayout}>
+          <Image style={styles.iconWx} source={icon_wx} />
+          <Image style={styles.iconWx} source={icon_qq} />
+        </View>
       </View>
     );
   };
 
   return (
-    <View style={styles.root}>
+    <View style={allStyles.root}>
       {loginType === 'quick' ? renderQuickLogin() : renderInputLogin()}
     </View>
   );
 };
-const styles = StyleSheet.create({
+const allStyles = StyleSheet.create({
   root: {
     width: '100%',
     height: '100%',
@@ -207,5 +340,25 @@ const styles = StyleSheet.create({
     width: 200,
     height: 100,
     marginTop: 300,
+  },
+  protocolLayout: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 40,
+    marginTop: 12,
+  },
+  radioButton: {
+    width: 20,
+    height: 20,
+  },
+  labelTxt: {
+    fontSize: 12,
+    color: '#999',
+    marginLeft: 6,
+  },
+  protocolTxt: {
+    fontSize: 12,
+    color: '#1020ff',
   },
 });
