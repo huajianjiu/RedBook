@@ -7,7 +7,12 @@ import {
   Text,
   Linking,
   TextInput,
+  LayoutAnimation,
+  ToastAndroid,
 } from 'react-native';
+
+import {useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
 
 import icon_main_logo from '../../assets/icon_main_logo.png';
 import icon_unselected from '../../assets/icon_unselected.png';
@@ -20,11 +25,39 @@ import icon_eye_close from '../../assets/icon_eye_close.png';
 import icon_exchange from '../../assets/icon_exchange.png';
 import icon_wx from '../../assets/icon_wx.png';
 import icon_qq from '../../assets/icon_qq.webp';
+import icon_close_modal from '../../assets/icon_close_modal.png';
+import {formatPhone, replaceBlank} from '../../utils/StringUtils';
+import UserStore from '../../store/UserStore';
 
 export default () => {
   const [loginType, setLoginType] = useState<'quick' | 'input'>('quick');
   const [check, setCheck] = useState<boolean>(false);
   const [eyeOpen, setEyeOpen] = useState(false);
+
+  const [phone, setPhone] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+
+  const navigation = useNavigation<StackNavigationProp<any>>();
+
+  const canLogin =
+    phone?.length === 13 && password.length > 0 && password.length < 21;
+
+  const onLoginPress = async () => {
+    if (!canLogin || !check) {
+      return;
+    }
+    UserStore.requestLogin(
+      replaceBlank(phone),
+      password,
+      (success: boolean) => {
+        if (success) {
+          navigation.replace('HomeTab');
+        } else {
+          ToastAndroid.show('登录失败，请检查用户名和密码', ToastAndroid.LONG);
+        }
+      },
+    );
+  };
   const renderQuickLogin = () => {
     const styles = StyleSheet.create({
       root: {
@@ -119,15 +152,11 @@ export default () => {
           </TouchableOpacity>
         </View>
         <TouchableOpacity
+          activeOpacity={0.7}
           style={styles.otherLoginButton}
           onPress={() => {
-            setLoginType(type => {
-              if (type === 'quick') {
-                return 'input';
-              } else {
-                return 'quick';
-              }
-            });
+            LayoutAnimation.easeInEaseOut();
+            setLoginType('input');
           }}>
           <Text style={styles.otherLoginTxt}>其他登录方式</Text>
           <Image style={styles.icon_arrow} source={icon_arrow} />
@@ -150,7 +179,7 @@ export default () => {
         height: '100%',
         flexDirection: 'column',
         alignItems: 'center',
-        paddingHorizontal: 56,
+        paddingHorizontal: 48,
       },
       pwdLogin: {
         fontSize: 24,
@@ -228,8 +257,17 @@ export default () => {
       },
       loginButton: {
         width: '100%',
-        height: 56,
-        backgroundColor: 'red',
+        height: 50,
+        backgroundColor: '#ff2442',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 28,
+        marginTop: 20,
+      },
+      loginButtonDisable: {
+        width: '100%',
+        height: 50,
+        backgroundColor: '#DDDDDD',
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 28,
@@ -243,11 +281,20 @@ export default () => {
         width: '100%',
         flexDirection: 'row',
         marginTop: 54,
-        justifyContent: 'space-between',
+        justifyContent: 'space-around',
       },
       iconWx: {
         width: 50,
         height: 50,
+      },
+      closeButton: {
+        position: 'absolute',
+        left: 36,
+        top: 24,
+      },
+      closeImg: {
+        width: 28,
+        height: 28,
       },
     });
     return (
@@ -259,9 +306,14 @@ export default () => {
           <Image style={styles.triangle} source={icon_triangle} />
           <TextInput
             keyboardType={'number-pad'}
+            maxLength={13}
             style={styles.phoneInput}
             placeholderTextColor="#bbb"
             placeholder="请输入手机号码"
+            value={phone}
+            onChangeText={(text: string) => {
+              setPhone(formatPhone(text));
+            }}
           />
         </View>
 
@@ -272,6 +324,11 @@ export default () => {
             style={[styles.phoneInput, styles.pwdInput]}
             placeholderTextColor="#bbb"
             placeholder="请输入密码"
+            maxLength={20}
+            value={password}
+            onChangeText={(text: string) => {
+              setPassword(text);
+            }}
           />
           <TouchableOpacity
             onPress={() => {
@@ -289,7 +346,12 @@ export default () => {
           <Text style={styles.codeLoginTxt}>验证码登录</Text>
           <Text style={styles.forgetPwdTxt}>忘记密码？</Text>
         </View>
-        <TouchableOpacity activeOpacity={0.7} style={styles.loginButton}>
+        <TouchableOpacity
+          activeOpacity={canLogin && check ? 0.7 : 1}
+          style={
+            canLogin && check ? styles.loginButton : styles.loginButtonDisable
+          }
+          onPress={onLoginPress}>
           <Text style={styles.loginTxt}>登录</Text>
         </TouchableOpacity>
         <View style={allStyles.protocolLayout}>
@@ -318,6 +380,15 @@ export default () => {
           <Image style={styles.iconWx} source={icon_wx} />
           <Image style={styles.iconWx} source={icon_qq} />
         </View>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          style={styles.closeButton}
+          onPress={() => {
+            LayoutAnimation.easeInEaseOut();
+            setLoginType('quick');
+          }}>
+          <Image style={styles.closeImg} source={icon_close_modal} />
+        </TouchableOpacity>
       </View>
     );
   };
