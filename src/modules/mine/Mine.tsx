@@ -3,7 +3,7 @@ import {View, StyleSheet, Text} from 'react-native';
 export default () => {
   return (
     <View style={styles.root}>
-      <Text style={{fontSize: 40, color: 'red'}}>首页</Text>
+      <Text style={{fontSize: 40, color: 'red'}}>我的</Text>
     </View>
   );
 };

@@ -1,9 +1,8 @@
-
 const apiConfig = {
- login: {
-   url: '/user/login',
-   method: 'get',
- }
-}
+  login: {
+    url: '/user/login',
+    method: 'get',
+  },
+};
 
 export default apiConfig;
