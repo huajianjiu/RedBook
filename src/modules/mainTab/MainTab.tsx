@@ -1,59 +1,103 @@
-import React, {useEffect} from 'react';
-import {View, StyleSheet, Image} from 'react-native';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import React from 'react';
+import {View, StyleSheet, Image, TouchableOpacity, Text} from 'react-native';
+import {
+  BottomTabBarProps,
+  createBottomTabNavigator,
+} from '@react-navigation/bottom-tabs';
+import {launchImageLibrary} from 'react-native-image-picker';
+
 import Home from '../home/Home';
 import Shop from '../shop/Shop';
 import Mine from '../mine/Mine';
 import Message from '../message/Message';
 
-import icon_tab_home_normal from '../../assets/icon_tab_home_normal.png';
-import icon_tab_home_selected from '../../assets/icon_tab_home_selected.png';
-import icon_tab_shop_normal from '../../assets/icon_tab_shop_normal.png';
-import icon_tab_shop_selected from '../../assets/icon_tab_shop_selected.png';
-import icon_tab_message_normal from '../../assets/icon_tab_message_normal.png';
-import icon_tab_message_selected from '../../assets/icon_tab_message_selected.png';
-import icon_tab_mine_normal from '../../assets/icon_tab_mine_normal.png';
-import icon_tab_mine_selected from '../../assets/icon_tab_mine_selected.png';
+import icon_tab_publish from '../../assets/icon_tab_publish.png';
 
 const BottomTab = createBottomTabNavigator();
 export default () => {
+  const RedBookTabBar = ({
+    state,
+    descriptors,
+    navigation,
+  }: BottomTabBarProps) => {
+    const {routes, index} = state;
+
+    const onPublishPress = () => {
+      launchImageLibrary(
+        {
+          mediaType: 'photo',
+          quality: 1,
+          includeBase64: true,
+        },
+        (response): void => {
+          const {assets} = response;
+          if (assets?.length === 0) {
+            console.log('assets is empty');
+            return;
+          } else {
+            // @ts-ignore
+            const {uri, width, height, fileName, fileSize, type} = assets[0];
+            console.log('uri', uri);
+            console.log('width', width);
+            console.log('height', height);
+            console.log('fileName', fileName);
+            console.log('fileSize', fileSize);
+            console.log('type', type);
+          }
+        },
+      );
+    };
+
+    return (
+      <View style={styles.tabBarContainer}>
+        {routes.map((route: any, idx: number) => {
+          const {options} = descriptors[route.key];
+          const label = options.title;
+          const isFocused = index === idx;
+          if (idx === 2) {
+            return (
+              <TouchableOpacity
+                key={label}
+                style={styles.tabItem}
+                onPress={onPublishPress}>
+                <Image
+                  style={styles.icon_tab_publish}
+                  source={icon_tab_publish}
+                />
+              </TouchableOpacity>
+            );
+          }
+          return (
+            <TouchableOpacity
+              key={label}
+              style={styles.tabItem}
+              onPress={() => {
+                navigation.navigate(route.name);
+              }}>
+              <Text
+                style={{
+                  fontSize: isFocused ? 19 : 16,
+                  color: isFocused ? '#333' : '#999',
+                  fontWeight: 'bold',
+                }}>
+                {label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    );
+  };
+
   return (
     <View style={styles.root}>
-      <BottomTab.Navigator
-        screenOptions={({route}) => {
-          return {
-            tabBarIcon: ({focused, color, size}) => {
-              let img;
-              if (route.name === 'Home') {
-                img = focused ? icon_tab_home_selected : icon_tab_home_normal;
-              } else if (route.name === 'Shop') {
-                img = focused ? icon_tab_shop_selected : icon_tab_shop_normal;
-              } else if (route.name === 'Message') {
-                img = focused
-                  ? icon_tab_message_selected
-                  : icon_tab_message_normal;
-              } else if (route.name === 'Mine') {
-                img = focused ? icon_tab_mine_selected : icon_tab_mine_normal;
-              }
-              return (
-                <Image
-                  style={{width: size, height: size, tintColor: color}}
-                  source={img}
-                />
-              );
-            },
-          };
-        }}
-        // @ts-ignore
-        tabBarOptions={{
-          activeTintColor: '#ff2442',
-          inactiveTintColor: '#999',
-        }}>
+      <BottomTab.Navigator tabBar={props => <RedBookTabBar {...props} />}>
         <BottomTab.Screen
           name={'Home'}
           component={Home}
           options={{
             title: '首页',
+            headerShown: false,
           }}
         />
         <BottomTab.Screen
@@ -61,6 +105,15 @@ export default () => {
           component={Shop}
           options={{
             title: '购物',
+            headerShown: false,
+          }}
+        />
+        <BottomTab.Screen
+          name={'Publish'}
+          component={Shop}
+          options={{
+            title: '发布',
+            headerShown: false,
           }}
         />
         <BottomTab.Screen
@@ -68,6 +121,7 @@ export default () => {
           component={Message}
           options={{
             title: '消息',
+            headerShown: false,
           }}
         />
         <BottomTab.Screen
@@ -75,6 +129,7 @@ export default () => {
           component={Mine}
           options={{
             title: '我',
+            headerShown: false,
           }}
         />
       </BottomTab.Navigator>
@@ -86,5 +141,23 @@ const styles = StyleSheet.create({
   root: {
     width: '100%',
     height: '100%',
+  },
+  tabBarContainer: {
+    width: '100%',
+    height: 48,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'white',
+  },
+  tabItem: {
+    height: '100%',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  icon_tab_publish: {
+    width: 58,
+    height: 40,
+    resizeMode: 'contain',
   },
 });
