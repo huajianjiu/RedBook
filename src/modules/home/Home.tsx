@@ -14,6 +14,7 @@ import FlowList from '../../components/flowlist/FlowList.js';
 import ResizeImage from '../../components/ResizeImage';
 import Heart from '../../components/Heart';
 import TitleBar from './components/TitleBar';
+import CategoryList from './components/CategoryList';
 
 import icon_arrow from '../../assets/icon_arrow.png';
 
@@ -59,60 +60,8 @@ export default observer(() => {
   const Footer = () => {
     return <Text style={styles.footerText}>没有更多数据</Text>;
   };
-  const Header = () => {
-    const styles = StyleSheet.create({
-      container: {
-        width: '100%',
-        height: 36,
-        flexDirection: 'row',
-        backgroundColor: '#ffffff',
-        marginBottom: 6,
-      },
-      scrollView: {
-        flex: 1,
-        height: '100%',
-      },
-      openButton: {
-        width: 40,
-        height: '100%',
-        justifyContent: 'center',
-        alignItems: 'center',
-      },
-      openImg: {
-        width: 18,
-        height: 18,
-        transform: [{rotate: '-90deg'}],
-      },
-      tabItem: {
-        width: 64,
-        height: '100%',
-        justifyContent: 'center',
-        alignItems: 'center',
-      },
-      tabItemText: {
-        fontSize: 16,
-        color: '#999999',
-      },
-    });
-    const myList = store.categoryList.filter(i => i.isAdd);
-    return (
-      <View style={styles.container}>
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.scrollView}>
-          {myList.map((item, index) => {
-            return (
-              <TouchableOpacity style={styles.tabItem}>
-                <Text style={styles.tabItemText}>{item.name}</Text>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
-        <TouchableOpacity style={styles.openButton}>
-          <Image style={styles.openImg} source={icon_arrow} />
-        </TouchableOpacity>
-      </View>
-    );
-  };
 
+  const categoryList = store.categoryList.filter(i => i.isAdd);
   return (
     <View style={styles.root}>
       <TitleBar
@@ -124,6 +73,7 @@ export default observer(() => {
       <FlowList
         style={styles.flatList}
         data={store.homeList}
+        keyExtractor={(item: ArticleSimple) => item.id}
         contentContainerStyle={styles.container}
         renderItem={renderItem}
         numColumns={2}
@@ -132,7 +82,15 @@ export default observer(() => {
         onEndReachedThreshold={0.1}
         onEndReached={loadMore}
         ListFooterComponent={<Footer />}
-        ListHeaderComponent={<Header />}
+        ListHeaderComponent={
+          <CategoryList
+            categoryList={categoryList}
+            allCategoryList={store.categoryList}
+            onCategoryChange={category => {
+              console.log(JSON.stringify(category));
+            }}
+          />
+        }
       />
     </View>
   );
