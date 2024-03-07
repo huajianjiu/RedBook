@@ -7,7 +7,9 @@ import {
   Text,
   Dimensions,
 } from 'react-native';
+
 import icon_arrow from '../../../../assets/icon_arrow.png';
+import icon_delete from '../../../../assets/icon_delete.png';
 
 const {width: SCREEN_WIDTH} = Dimensions.get('window');
 
@@ -17,9 +19,11 @@ type Props = {
   subTitle: string;
   needEdit?: boolean;
   marginTop?: number;
+  onItemRemove?: (item: Category) => void;
 };
 export default (props: Props) => {
-  const {list, title, subTitle} = props;
+  const {list, title, subTitle, onItemRemove} = props;
+  const [componentList, setComponentList] = useState<Category[]>(list);
   let needEdit = !!props.needEdit;
   let marginTop = props.marginTop || 0;
 
@@ -27,12 +31,18 @@ export default (props: Props) => {
 
   const itemPress = useCallback(
     (item: Category, index: number) => () => {
-      if (!edit) return;
+      if (!edit) {
+        return;
+      }
+      const newEditList = componentList.filter(i => i.name !== item.name);
+      console.log(newEditList, item.name);
+      setComponentList(newEditList);
+      onItemRemove?.(item);
     },
     [],
   );
 
-  return list?.length > 0 ? (
+  return componentList?.length > 0 ? (
     <>
       <View style={[styles.row, {marginTop}]}>
         <Text style={styles.titleText}>{title}</Text>
@@ -55,13 +65,22 @@ export default (props: Props) => {
         ) : null}
       </View>
       <View style={styles.listContent}>
-        {list.map((item, index) => {
+        {componentList.map((item, index) => {
           return (
             <TouchableOpacity
               key={index}
-              style={styles.itemLayout}
+              style={
+                item.default && needEdit
+                  ? styles.itemLayoutDefault
+                  : styles.itemLayout
+              }
               onPress={itemPress(item, index)}>
-              <Text style={styles.itemText}>{item.name}</Text>
+              <Text style={styles.itemText}>
+                {needEdit ? item.name : '+ ' + item.name}
+              </Text>
+              {edit && !item.default && (
+                <Image style={styles.deleteImg} source={icon_delete} />
+              )}
             </TouchableOpacity>
           );
         })}
@@ -126,8 +145,25 @@ const styles = StyleSheet.create({
     marginLeft: 16,
     marginTop: 12,
   },
+  itemLayoutDefault: {
+    width: (SCREEN_WIDTH - 80) / 4,
+    height: 38,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#EEE',
+    borderRadius: 6,
+    marginLeft: 16,
+    marginTop: 12,
+  },
   itemText: {
     fontSize: 15,
     color: '#666',
+  },
+  deleteImg: {
+    width: 14,
+    height: 14,
+    position: 'absolute',
+    top: -6,
+    right: -6,
   },
 });

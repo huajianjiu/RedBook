@@ -73,6 +73,9 @@ export default forwardRef((props: Props, ref) => {
             subTitle="点击进入频道"
             needEdit={true}
             list={myList}
+            onItemRemove={(item: Category) => {
+              //
+            }}
           />
           <Channel
             title="推荐频道"
