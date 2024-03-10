@@ -1,7 +1,7 @@
 import axios, {AxiosResponse} from 'axios';
 import Apis from '../api/index';
 const instance = axios.create({
-  baseURL: 'http://47.100.242.112:8080',
+  baseURL: 'http://192.168.124.2:8080',
   timeout: 10000,
 });
 // 响应拦截器

@@ -8,7 +8,6 @@ import {
   Linking,
   TextInput,
   LayoutAnimation,
-  ToastAndroid,
 } from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
@@ -28,6 +27,7 @@ import icon_qq from '../../assets/icon_qq.webp';
 import icon_close_modal from '../../assets/icon_close_modal.png';
 import {formatPhone, replaceBlank} from '../../utils/StringUtils';
 import UserStore from '../../store/UserStore';
+import Toast from '../../components/widget/Toast';
 
 export default () => {
   const [loginType, setLoginType] = useState<'quick' | 'input'>('quick');
@@ -53,7 +53,7 @@ export default () => {
         if (success) {
           navigation.replace('MainTab');
         } else {
-          ToastAndroid.show('登录失败，请检查用户名和密码', ToastAndroid.LONG);
+          Toast.show('登录失败，请检查用户名和密码');
         }
       },
     );

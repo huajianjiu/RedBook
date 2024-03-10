@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {
   View,
   StyleSheet,
@@ -17,10 +17,15 @@ import TitleBar from './components/TitleBar';
 import CategoryList from './components/CategoryList';
 
 import icon_arrow from '../../assets/icon_arrow.png';
+import {useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
 
 const {width: SCREEN_WIDTH} = Dimensions.get('window');
 export default observer(() => {
   const store = useLocalStore(() => new HomeStore());
+
+  const navigation = useNavigation<StackNavigationProp<any>>();
+
   useEffect(() => {
     store.requestHomeList();
     store.getCategoryList();
@@ -33,10 +38,16 @@ export default observer(() => {
   const loadMore = () => {
     store.requestHomeList();
   };
+  const onArticlePress = useCallback(
+    (article: ArticleSimple) => () => {
+      navigation.push('ArticleDetail', {id: article.id});
+    },
+    [],
+  );
 
   const renderItem = ({item, index}: {item: ArticleSimple; index: number}) => {
     return (
-      <View style={styles.item}>
+      <TouchableOpacity style={styles.item} onPress={onArticlePress(item)}>
         <ResizeImage uri={item.image} />
         <Text style={styles.titleText}>{item.title}</Text>
         <View style={styles.nameLayout}>
@@ -53,7 +64,7 @@ export default observer(() => {
           />
           <Text style={styles.countText}>{item.favoriteCount}</Text>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 

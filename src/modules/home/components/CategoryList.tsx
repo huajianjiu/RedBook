@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   ScrollView,
@@ -20,6 +20,9 @@ type Props = {
 export default ({categoryList, allCategoryList, onCategoryChange}: Props) => {
   const modalRef = useRef<CategoryModalRef>(null);
   const [category, setCategory] = useState<Category>(categoryList[0]);
+  useEffect(() => {
+
+  }, []);
   // eslint-disable-next-line @typescript-eslint/no-shadow
   const onCategoryPress = (category: Category) => {
     setCategory(category);
@@ -31,11 +34,11 @@ export default ({categoryList, allCategoryList, onCategoryChange}: Props) => {
         horizontal={true}
         showsHorizontalScrollIndicator={false}
         style={styles.scrollView}>
-        {categoryList.map((item, index) => {
+        {categoryList.map(item => {
           const isSelected = item.name === category?.name;
           return (
             <TouchableOpacity
-              key={index}
+              key={item.name}
               style={styles.tabItem}
               activeOpacity={1}
               onPress={() => onCategoryPress(item)}>

@@ -1,3 +1,5 @@
+import ArticleDetailStore from "../modules/articleDetail/ArticleDetailStore";
+
 const apiConfig = {
   login: {
     url: '/user/login',
@@ -5,6 +7,10 @@ const apiConfig = {
   },
   homeList: {
     url: '/home/homeList',
+    method: 'get',
+  },
+  articleDetail: {
+    url: '/article/articleDetail',
     method: 'get',
   },
 };
